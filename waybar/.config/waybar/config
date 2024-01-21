@@ -64,8 +64,8 @@
         "spacing": 10
     },
     "clock": {
-        "format": "{:%H:%M %Y-%m-%d}",
-        "interval":60,
+        "format": "{:%H:%M:%S %Y-%m-%d}",
+        "interval":1,
         "max-length":35
     },
     "cpu": {

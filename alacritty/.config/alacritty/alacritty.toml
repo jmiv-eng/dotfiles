@@ -1,0 +1,71 @@
+live_config_reload = true
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "0x686868"
+blue = "0x59C2FF"
+cyan = "0x95E6CB"
+green = "0xC2D94C"
+magenta = "0xFFEE99"
+red = "0xF07178"
+white = "0xFFFFFF"
+yellow = "0xFFB454"
+
+[colors.normal]
+black = "0x01060E"
+blue = "0x53BDFA"
+cyan = "0x90E1C6"
+green = "0x91B362"
+magenta = "0xFAE994"
+red = "0xEA6C73"
+white = "0xC7C7C7"
+yellow = "0xF9AF4F"
+
+[colors.primary]
+background = "0x0A0E14"
+foreground = "0xB3B1AD"
+
+[cursor]
+blink_interval = 500
+thickness = 0.15
+unfocused_hollow = true
+
+[cursor.style]
+blinking = "On"
+shape = "Beam"
+
+[env]
+TERM = "alacritty"
+
+[font]
+size = 12.0
+
+[font.bold]
+family = "Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "Mono"
+style = "Italic"
+
+[font.normal]
+family = "MesloLGS NF"
+style = "Regular"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[shell]
+program = "/usr/bin/zsh"
+
+[window]
+decorations_theme_variant = "Dark"
+dynamic_title = true
+opacity = 0.9

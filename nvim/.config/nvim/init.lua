@@ -1,3 +1,4 @@
+-- custom remaps
 require("jmiv.set")
 require("jmiv.remap")
 
