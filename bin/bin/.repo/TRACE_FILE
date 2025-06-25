@@ -1,0 +1,8 @@
+PID: 8556 START: 1750815111876386816 :+++++++++++++++NEW COMMAND+++++++++++++++++++ starting new command: init [sid=repo-20250625T013149Z-P0000216c/repo-20250625T013151Z-P0000216c]
+
+PID: 8556 START: 1750815111883714560 :git command None ['git', 'config', '--get', 'trace2.eventtarget'] with debug: : git config --get trace2.eventtarget 1>| 2>|
+
+PID: 8556 END: 1750815111884904192 :git command None ['git', 'config', '--get', 'trace2.eventtarget'] with debug: : git config --get trace2.eventtarget 1>| 2>|
+
+PID: 8556 END: 1750815111884955648 :+++++++++++++++NEW COMMAND+++++++++++++++++++ starting new command: init [sid=repo-20250625T013149Z-P0000216c/repo-20250625T013151Z-P0000216c]
+

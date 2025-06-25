@@ -16,5 +16,6 @@ export WLR_NO_HARDWARE_CURSORS=1
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 if [ "$(tty)" = "/dev/tty1" ]; then
-	exec sway --unsupported-gpu
+	exec sway
 fi
+. "$HOME/.cargo/env"

@@ -3,15 +3,28 @@
 # Read `man 5 sway` for a complete reference.
 
 ### Variables
+set $left_monitor DP-4
+set $right_monitor DP-1
 set $mod Mod4
 set $term alacritty
 set $menu wofi --show drun,run --allow-images -i
-set $bg_left ~/pictures/backgrounds/minimalist_mountains.jpg
-set $bg_right ~/pictures/backgrounds/leviathan.png 
+set $bg_left ~/pictures/backgrounds/jmaple.jpg
+set $bg_right ~/pictures/backgrounds/arch2.jpg
 set $save_screenshot grim -g ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png
 set $save_screenclip slurp | grim -g - ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png 
 set $clip_screenclip exec grim -g "$(slurp)" - | wl-copy 
-set $lock swaylock -f -e --image $bg_right 
+set $lock swaylock -f -e --image $right_monitor:$bg_right --image $left_monitor:$bg_left
+
+set {
+    $game inhibit_idle focus; move to workspace 10; floating enable; border none; fullscreen enable; shadows disable
+}
+
+for_window {
+    [class="discord"] move to workspace 1
+    [class="steam"] move to workspace 5
+    [class="steam_app.*"] $game
+    [instance="steam_app.*"] $game
+}
 
 # Home row direction keys, like vim
 set $left h
@@ -27,18 +40,25 @@ exec --no-startup-id {
 ## Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs 
 exec_always pkill shikane; exec shikane 
-output * background $bg_right fill 
+output $right_monitor background $bg_right fill 
+output $left_monitor background $bg_left fill 
 
 exec_always pkill udiskie; exec udiskie --no-automount --notify --tray
-
-#output eDP-1 :
-#    fill scale 2.5
-#output HDMI-A-1 bg $bg_right fill scale 2 
-#output "Dell Inc. DELL U2715H H7YCC6B806JS" bg $bg_left fill
+exec sway-audio-idle-inhibit
+exec dunst
 
 # HiDPi mouse scaling issue: 
 # https://github.com/swaywm/sway/issues/6931
-seat seat0 xcursor_theme Adwaita
+seat * xcursor_theme capitaine-cursors 30 
+
+set $gnome-schema org.gnome.desktop.interface
+
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Adwaita-dark'
+    gsettings set $gnome-schema icon-theme 'la-capitaine-icon-theme'
+    gsettings set $gnome-schema cursor-theme 'capitaine-cursors'
+    gsettings set $gnome-schema cursor-size '30' 
+}
 
 ### BACKLIGHT commands
 bindsym XF86MonBrightnessUp exec --no-startup-id /home/jmiv/bin/jm_backlight/bright_up.sh
@@ -59,11 +79,17 @@ bindsym $mod+Shift+S exec $clip_screenclip
 
 # Mouse settings
 input "1133:16505:Logitech_G_Pro" { 
-    pointer_accel -0.7
+    tap enabled
+    natural_scroll disabled
+    dwt enabled
+    accel_profile "flat"
+    pointer_accel 0.5 
 }
-input "1267:32:Elan_TrackPoint" {
-    pointer_accel -0.5
-    scroll_factor 0.5 
+
+input "1133:16507:Logitech_MX_Vertical" {
+    natural_scroll disabled         # Reverses scroll direction if enabled (mac-style)
+    accel_profile "flat"           # Disables pointer acceleration (1:1 movement)
+    pointer_accel 0.5              # Increases speed — tune between -1.0 to 1.0
 }
 
 ### Input configuration
@@ -77,6 +103,7 @@ floating_modifier $mod normal
 # Reload config file
 bindsym $mod+Shift+c reload
 bindsym $mod+Escape exec $lock
+bindsym $mod+p+s exec '$lock && systemctl suspend'
 # Exit sway (logs you out of your Wayland session)
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 
@@ -90,9 +117,8 @@ gaps outer 2
 exec swayidle -w \
     timeout 800 '$lock' \
     timeout 1000 'swaymsg "output * dpms off"' \
-    timeout 1800 'systemctl suspend' \
-    resume 'swaymsg "output * dpms on"' \
-    before-sleep '$lock'
+    timeout 1800 '$lock && systemctl suspend' \
+    resume 'swaymsg "output * dpms on"'
 
 # Moving around:
     # Move your focus around

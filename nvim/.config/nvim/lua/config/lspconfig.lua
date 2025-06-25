@@ -59,6 +59,7 @@ local servers = {
   jsonls = {},
   bashls = {},
   csharp_ls = {},
+  zls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },

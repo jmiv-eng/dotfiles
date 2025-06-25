@@ -14,6 +14,7 @@ export QT_QPA_PLATFORM="wayland"
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export MOZ_ENABLE_WAYLAND=1
 export WLR_NO_HARDWARE_CURSORS=1
+export XDG_SESSION_TYPE=wayland
 
 alias ls='ls --color=auto'
 alias ll='ls -lav --ignore=.. --color=auto'   # show long listing of all except ".."

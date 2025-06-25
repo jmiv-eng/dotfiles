@@ -8,5 +8,5 @@ no_actions=true
 halign=fill
 orientation=vertical
 content_halign=fill
-drun-display_generic=true
+drun-display_generic=false
 term=alacritty
