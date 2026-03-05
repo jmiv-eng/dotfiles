@@ -54,18 +54,12 @@ end
 local servers = {
   clangd = {},
   pyright = {},
-  rust_analyzer = {
-    settings = {
-      ['rust-analyzer'] = {
-        cargo = { allFeatures = true },
-        procMacro = { enable = true },
-      },
-    }
-  },
+  rust_analyzer = {},
   cmake = {},
   jsonls = {},
   bashls = {},
   csharp_ls = {},
+  zls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },

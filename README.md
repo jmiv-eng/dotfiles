@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). Clone this repo to `$HOME`, then stow whichever packages apply to the current machine.
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). One branch (`main`), all machines.
 
 ---
 
@@ -8,112 +8,52 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). C
 
 | Package | Description |
 |---|---|
-| `alacritty` | Terminal emulator |
-| `bin` | Custom scripts and executables |
-| `git` | Git configuration |
+| `shell` | Unified shell environment (.zprofile, .zshrc, .bashrc, .bash_profile, .p10k.zsh) |
+| `sway` | Sway window manager (unified config + local.conf include) |
+| `waybar` | Wayland status bar (exec-if for hardware-conditional modules) |
+| `shikane` | Display profile management (all machines' profiles in one file) |
+| `alacritty` | Terminal emulator (JetBrainsMono Nerd Font) |
 | `nvim` | Neovim configuration |
-| `sway` | Sway window manager |
-| `waybar` | Wayland status bar |
+| `git` | Git configuration |
 | `wofi` | Wayland application launcher |
 | `swaylock` | Screen lock |
-| `shikane` | Display profile management |
-| `rofi` | X11 application launcher |
+| `dunst` | Notification daemon |
+| `bin` | Custom scripts and executables |
 | `ranger` | Terminal file manager |
-| `i3` | i3 window manager |
-| `i3blocks` | i3 status bar |
-| `laptop_wayland` | Laptop-specific shell environment (Nvidia/Wayland) |
-| `desktop_wayland` | Desktop-specific shell environment (AMD/Wayland) |
-| `desktop_xorg` | Legacy desktop shell environment (X11) |
-| `kanshi` | Legacy display configuration (superseded by shikane) |
+| `legacy/` | Old configs kept for reference (i3, i3blocks, kanshi, rofi, desktop_xorg) |
 
 ---
 
-## Usage
-
-Clone to your home directory:
+## Setup
 
 ```bash
 git clone <repo-url> ~/dotfiles
 cd ~/dotfiles
+stow shell sway waybar shikane alacritty nvim git wofi swaylock dunst bin ranger
+cp ~/.config/sway/local.conf.example ~/.config/sway/local.conf
+# Edit local.conf with your monitor names, wallpapers, and workspace mapping
 ```
 
-> **Note:** The `-n` flag used throughout enables **simulation mode** — it prints what would happen without modifying the filesystem. Remove `-n` to apply for real.
+### Machine-specific config
 
-### Stow a package
+Sway loads `~/.config/sway/local.conf` for machine-specific values (monitor names, wallpapers, workspace mapping, lock screen images). This file is not in git — copy from `local.conf.example` and customize per machine.
 
-Creates symlinks in `~` pointing to the files in `<package>`:
-
-```bash
-stow -nvSt ~ <package>
-```
-
-### Unstow a package
-
-Removes the symlinks for a package (repository files are untouched):
-
-```bash
-stow -nvDt ~ <package>
-```
-
-### Restow a package
-
-Useful after adding or removing files from a package — equivalent to unstow then stow:
-
-```bash
-stow -nvRt ~ <package>
-```
-
-### Adopt existing files
-
-Moves pre-existing dotfiles into the repo and replaces them with symlinks. Use with care — this overwrites files in the repo:
-
-```bash
-stow --adopt -nvSt ~ <package>
-```
-
-### Stow multiple packages at once
-
-```bash
-stow -nvSt ~ nvim alacritty git sway waybar wofi swaylock shikane bin
-```
+GPU detection happens in `.zprofile` / `.bash_profile` via hostname case statement. Nvidia machines get `--unsupported-gpu` and related env vars.
 
 ---
 
-## Typical Setup
+## Stow Commands
 
-For a Wayland machine, stow the common packages plus the appropriate system-specific package:
-
-```bash
-# Common
-stow -St ~ nvim alacritty git sway waybar wofi swaylock shikane bin
-
-# Laptop (Nvidia + Wayland)
-stow -St ~ laptop_wayland
-
-# Desktop (AMD + Wayland)
-stow -St ~ desktop_wayland
-```
-
----
-
-## Verifying Symlinks
-
-Check that symlinks were created correctly:
-
-```bash
-ls -la ~ | grep '\->'
-```
-
-Check where a specific file links to:
-
-```bash
-readlink -f ~/.zshrc
-```
+| Command | Description |
+|---|---|
+| `stow <pkg>` | Create symlinks for a package |
+| `stow -D <pkg>` | Remove symlinks for a package |
+| `stow -R <pkg>` | Restow (unstow + stow) |
+| `stow --adopt <pkg>` | Adopt existing files into the repo |
 
 ---
 
 ## Resources
 
 - [GNU Stow Manual](https://www.gnu.org/software/stow/manual/stow.html)
-- [GNU Stow — man page](https://linux.die.net/man/8/stow)
 - [DevInsideYou — Dotfiles with GNU Stow](https://youtu.be/CFzEuBGPPPg) (YouTube)

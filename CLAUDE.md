@@ -2,92 +2,71 @@
 
 ## Repository Purpose
 
-This is a personal dotfiles repository managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level directory is a Stow package — running `stow -St ~ <package>` symlinks its contents into `$HOME`, making the repo the source of truth for system configuration.
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level directory is a Stow package — running `stow <package>` from `~/dotfiles` symlinks its contents into `$HOME`. One branch (`main`), all machines.
 
 ## Owner
 
-- Username: `jmichael` (primary), `jmiv` (older alias, appears in some configs)
+- Username: `jmichael` (primary), `jmiv` (older alias on some machines)
+- Git: `jmiv-eng` / `github@jmiv.dev`
 - Shell: zsh (Powerlevel10k + oh-my-zsh), bash as fallback
 - Editor: Neovim (lazy.nvim plugin manager)
 - WM: Sway (Wayland)
-- Terminal: Alacritty
-- Display management: Shikane (profile-based, matches monitors by vendor/serial)
+- Terminal: Alacritty (JetBrainsMono Nerd Font)
+- Display management: Shikane
 
 ## Machines
 
-The owner operates across four machines, each with different hardware:
-
-| Machine | GPU | Notes |
+| Hostname | GPU | Type |
 |---|---|---|
-| Work laptop 1 | Nvidia | Primary development machine, current branch |
-| Work laptop 2 | Nvidia | Secondary work machine |
-| Home laptop | Intel integrated | Personal portable |
-| Home PC | AMD | Personal desktop |
+| vu | Nvidia | Work laptop (BOE 3840x2160 + Samsung ultrawide dock) |
+| wave | Nvidia | Work laptop (1080p + triple-monitor dock) |
+| — | Intel | Home laptop |
+| jarvis | AMD | Home PC (LG 27GL850 144Hz + Dell U2715H portrait) |
 
 All machines run Arch Linux + Sway (Wayland).
 
-## Current Package Structure
+## Architecture
+
+### Multi-machine strategy
+
+All packages are shared — stow everything on every machine. Machine-specific values are handled by:
+
+1. **`~/.config/sway/local.conf`** — not in git, not stowed. Contains monitor names, wallpapers, workspace mapping, lock screen config. Template at `sway/.config/sway/local.conf.example`.
+2. **Hostname case in `.zprofile`/`.bash_profile`** — Nvidia machines get GPU env vars and `--unsupported-gpu`.
+3. **Waybar `exec-if`** — GPU temp module only renders on machines with the AMD GPU hwmon path.
+4. **Shikane profiles** — all machines' display profiles in one file; they self-select based on connected hardware.
+5. **Waybar `include`** — optional `~/.config/waybar/machine.json` for per-machine module overrides.
+
+### Package structure
 
 ```
-alacritty/         terminal emulator config
-bin/               custom scripts (bash/shell utilities, embedded debug tools)
-desktop_wayland/   shell environment for AMD desktop (.zshrc, .zprofile)
-desktop_xorg/      legacy X11 shell environment (mostly commented out, deprecated)
+shell/             unified shell environment (.zprofile, .zshrc, .bashrc, .bash_profile, .p10k.zsh)
+sway/              sway config + local.conf.example
+waybar/            status bar (exec-if for conditional modules)
+shikane/           display profiles for all machines
+alacritty/         terminal emulator
+nvim/              neovim (lazy.nvim, LSP, treesitter, telescope, vimtex)
 git/               git config
-i3/                i3 window manager (legacy, unused)
-i3blocks/          i3 status bar (legacy, unused)
-kanshi/            legacy display config (superseded by shikane, gitignored)
-laptop_wayland/    shell environment for Nvidia laptops (.bash_profile, .bashrc, .zprofile, .zshrc)
-nvim/              Neovim config (lazy.nvim, LSP, Treesitter, Telescope, vimtex)
-nvim_old/          archived legacy Neovim config (not tracked)
-ranger/            file manager config
-rofi/              X11 app launcher
-shikane/           display profile management (TOML, matches monitors by vendor/serial/model)
-sway/              Sway window manager config (unified, references shikane for displays)
-swaylock/          screen lock config
-waybar/            Wayland status bar
-wofi/              Wayland app launcher
+wofi/              app launcher
+swaylock/          screen lock
+dunst/             notification daemon
+bin/               custom scripts
+ranger/            file manager
+legacy/            old configs for reference (i3, i3blocks, kanshi, rofi, desktop_xorg)
 ```
 
-## The Core Problem
+### Files NOT in git (machine-local)
 
-The repo was originally structured for a single machine and has grown organically to support multiple machines without a clear multi-machine strategy. The following issues exist:
+- `~/.config/sway/local.conf` — monitor/wallpaper/workspace config
+- `~/.config/waybar/machine.json` — optional waybar overrides
+- `~/.vutility_secure` — work-specific secrets/exports
 
-### 1. Machine-specific packages are monolithic
+## Key Conventions
 
-`laptop_wayland/` and `desktop_wayland/` each contain full copies of `.zshrc`, `.zprofile`, `.bashrc`, and `.bash_profile`. These files are ~70–80% identical. The differences are:
-
-- **GPU environment variables**: Nvidia machines need `GBM_BACKEND=nvidia-drm`, `WLR_NO_HARDWARE_CURSORS=1`, and `exec sway --unsupported-gpu`. AMD/Intel machines do not.
-- **Sway launch flags**: `--unsupported-gpu` is Nvidia-only.
-- **Shell plugins**: `laptop_wayland/.zshrc` loads 7 oh-my-zsh plugins; `desktop_wayland/.zshrc` loads only `git`.
-- **SSH keychain**: `desktop_wayland` includes keychain setup for `id_ed25519` and `google_compute_engine`; `laptop_wayland` does not.
-- **PATH hardcoding**: `laptop_wayland` uses `/home/jmichael/bin`; `desktop_wayland` uses `/home/jmiv/bin` (old username).
-
-There are no packages yet for the Intel home laptop or the second work laptop — those machines would need new packages or would reuse existing ones despite potential mismatches.
-
-### 2. GNU Stow cannot merge files
-
-Stow works at the file level: a given file (e.g. `.zshrc`) can only be symlinked from one package at a time. There is no built-in mechanism to layer or compose files from multiple packages. This means any shared content must either be duplicated across packages or sourced from a separate file — neither of which is currently implemented.
-
-### 3. No installation automation
-
-There is no script to define which packages belong on which machine. Setting up a new machine requires knowing manually which packages to stow. This is currently documented only in the README in general terms.
-
-### 4. Divergence is accelerating
-
-The `work-laptop` branch (current) contains changes that are specific to one Nvidia work laptop — shikane profiles tuned to specific monitor serials, sway brightness controls, jdebug embedded tooling. As work machines accumulate work-specific tools and personal machines accumulate personal config, the shared packages (`nvim`, `sway`, `alacritty`) may also begin to diverge.
-
-### 5. Branch strategy is undefined
-
-There is a `main` branch, a `work-laptop` branch (in progress), and a remote `origin/pc` branch whose contents and purpose are unclear. There is no established convention for how machine-specific changes flow between branches or how shared changes (e.g. nvim plugin updates) get propagated to all machines.
-
-### 6. Secrets handling
-
-`laptop_wayland/.zprofile` and `.zshrc` source `~/.vutility_secure`, a file containing credentials that is intentionally not in the repo. This pattern works but is informal — there is no documented convention for what belongs in that file or how to bootstrap it on a new machine.
-
-## What Is Already Working Well
-
-- **Neovim, Alacritty, Waybar, Wofi, Swaylock, Ranger, Git** configs are fully unified — one package, no machine-specific variants needed.
-- **Sway** config is unified and delegates display layout to Shikane profiles, which handle hardware differences at the display-manager level rather than in the WM config.
-- **Shikane** profiles match monitors by vendor/serial/model string, so the same config file works across machines that may have different output port names.
-- The repo is already using Stow correctly and the symlinking workflow is established.
+- Stow target is `$HOME` (run `stow <pkg>` from `~/dotfiles`)
+- `stow --adopt` to pull existing files into the repo
+- Audio uses `@DEFAULT_SINK@` (not deprecated `pacmd`)
+- Cursor theme: capitaine-cursors
+- GTK theme: Adwaita-dark
+- Sway silently ignores missing `include` files
+- Shikane profiles use vendor/serial matching where possible, port-name matching as fallback

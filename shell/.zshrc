@@ -5,12 +5,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:/$HOME/.cargo/bin:$PATH
+# Path
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.cargo/bin:$PATH
 
-# Path to your oh-my-zsh installation.
+# oh-my-zsh
 ZSH=/usr/share/oh-my-zsh/
-
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(archlinux
@@ -23,27 +22,14 @@ plugins=(archlinux
     sudo
 )
 
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-#
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -lav --ignore=.. --color=auto'
+alias l='ls -lav --ignore=.?* --color=auto'
 alias vim="nvim"
 alias vi="nvim"
 alias rm="echo 'This is not the command you are looking for'; false"
+alias cl="clear"
 
 ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
@@ -51,9 +37,23 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
 fi
 
 source $HOME/.zprofile
-source $ZSH/oh-my-zsh.sh
+[[ -f /usr/share/oh-my-zsh/oh-my-zsh.sh ]] && source /usr/share/oh-my-zsh/oh-my-zsh.sh
 
+# Cargo
+[[ -f ~/.cargo/env ]] && source ~/.cargo/env
+
+# SSH agent detection
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+  sock=$(find /tmp -maxdepth 2 -path '/tmp/ssh-*' -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
+  if [[ -n "$sock" ]]; then
+    export SSH_AUTH_SOCK="$sock"
+  else
+    eval "$(ssh-agent -s)" > /dev/null
+  fi
+fi
+
+# Local overrides
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-. "$HOME/.cargo/env"

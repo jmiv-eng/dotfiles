@@ -1,0 +1,8 @@
+profile {
+	output eDP-2 enable mode 3840x2160@60.000Hz position 0,0 scale 2.0
+}
+
+profile { 
+	output eDP-2 mode 3840x2160@60.000Hz position 0,0 scale 2.0 
+	output DP-3 mode 5120x1440@60.000Hz position 1920,0 scale 1.3 
+}

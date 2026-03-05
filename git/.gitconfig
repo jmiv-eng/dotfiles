@@ -3,15 +3,14 @@
 	email = github@jmiv.dev
 [core]
 	editor = nvim
-	excludesFile = /home/jmichael/.config/.global_gitignore
 [init]
 	defaultBranch = main
 [credential]
 	helper = cache --timeout=3600
-[url "git@github.com:"]
-	insteadOf = https://github.com/
+[color]
+	ui = auto
 [pull]
-	rebase = false
+	rebase = true
 [push]
 	default = current
 	autoSetupRemote = true
