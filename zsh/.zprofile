@@ -16,16 +16,8 @@ export MOZ_ENABLE_WAYLAND=1
 export WLR_NO_HARDWARE_CURSORS=1
 export XDG_SESSION_TYPE=wayland
 
-alias ls='ls --color=auto'
-alias ll='ls -lav --ignore=.. --color=auto'   # show long listing of all except ".."
-alias l='ls -lav --ignore=.?* --color=auto'   # show long listing but no hidden dotfiles except "."
-alias vim="nvim"
-alias vi="nvim"
-alias rm="echo 'This is not the command you are looking for'; false"
-alias cl="clear"
-
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 if [ "$(tty)" = "/dev/tty1" ]; then
-	exec sway 
+	exec sway --unsupported-gpu
 fi

@@ -1,17 +1,76 @@
 [[profile]]
-name = "desktop"
+name = "laptop"
 exec = ["notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""]
-    [[profile.output]]
-    enable = true
-    search = ["m=27GL850", "s=005NTZN7V717", "v=LG Electronics"]
-    mode = { width = 2560, height = 1440, refresh = 144}
-    position = { x = 1200, y = 550 }
-    scale = 1.2
+  [[profile.output]]
+  search = "eDP-1"
+  enable = true
+  mode = { width = 1920, height = 1080 }
+  position = { x = 0, y = 0 }
+  scale = 1.0
 
-    [[profile.output]]
-    enable = true
-    search = ["m=DELL U2715H", "s=H7YCC6B806JS", "v=Dell Inc."]
-    mode = { width = 2560, height = 1440, refresh = 60}
-    position = { x = 0, y = 0 }
-    transform = "90"
-    scale = 1.2 
+  [[profile.output]]
+  search = "/DP-[0-9]/"
+  enable = false
+
+  [[profile.output]]
+  search = "n%HDMI-"
+  enable = false
+
+[[profile]]
+name = "conference"
+exec = ["notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""]
+  [[profile.output]]
+  search = "n/HDMI-A-1" 
+  enable = true
+  mode = { width = 2560, height = 1440, refresh = 60 }
+  position = { x = 1920, y = 0 }
+  scale = 1.25
+
+  [[profile.output]]
+  search = "eDP-1"
+  enable = true
+  mode = { width = 1920, height = 1080, refresh = 60 }
+  position = { x = 0, y = 0 }
+  scale = 1.0
+
+[[profile]]
+name = "docked-three"
+exec = ["notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""]
+  [[profile.output]]
+  search = "n=DP-3"
+  enable = true
+  mode = { width = 2560, height = 1440, refresh = 60 }
+  position = { x = 3968, y = 0 }
+  scale = 1.25
+
+  [[profile.output]]
+  search = "n=DP-4"
+  enable = true
+  mode = { width = 2560, height = 1440, refresh = 60 }
+  position = { x = 1920, y = 0 }
+  scale = 1.25
+
+  [[profile.output]]
+  search = "eDP-1"
+  enable = true
+  mode = { width = 1920, height = 1080, refresh = 60 }
+  position = { x = 0, y = 0 }
+  scale = 1.0
+
+[[profile]]
+name = "docked-lid-closed"
+exec = ["notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""]
+  [[profile.output]]
+  search = "n=DP-3"
+  enable = true
+  mode = { width = 2560, height = 1440, refresh = 144 }
+  position = { x = 3968, y = 0 }
+  scale = 1.25
+
+  [[profile.output]]
+  search = "n=DP-4"
+  enable = true
+  mode = { width = 2560, height = 1440, refresh = 144 }
+  position = { x = 1920, y = 0 }
+  scale = 1.25
+

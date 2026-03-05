@@ -41,21 +41,21 @@ TERM = "alacritty"
 [font]
 size = 12.0
 
+[font.normal]
+family = "MesloLGS NerdFont"
+style = "Regular"
+
 [font.bold]
-family = "Mono"
+family = "MesloLGS NerdFont"
 style = "Bold"
 
-[font.bold_italic]
-family = "Mono"
-style = "Bold Italic"
-
 [font.italic]
-family = "Mono"
+family = "MesloLGS NerdFont"
 style = "Italic"
 
-[font.normal]
-family = "MesloLGS NF"
-style = "Regular"
+[font.bold_italic]
+family = "MesloLGS NerdFont"
+style = "Bold Italic"
 
 [scrolling]
 history = 10000

@@ -4,16 +4,18 @@
 
 ### Variables
 set $left_monitor DP-4
-set $right_monitor DP-1
+set $right_monitor DP-3
+set $laptop_monitor eDP-1
 set $mod Mod4
 set $term alacritty
 set $menu wofi --show drun,run --allow-images -i
-set $bg_left ~/pictures/backgrounds/jmaple.jpg
-set $bg_right ~/pictures/backgrounds/arch2.jpg
+set $bg_left ~/pictures/backgrounds/arch1.png
+set $bg_right ~/pictures/backgrounds/arch1.png
+set $bg_laptop ~/pictures/backgrounds/arch1.png
 set $save_screenshot grim -g ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png
 set $save_screenclip slurp | grim -g - ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png 
 set $clip_screenclip exec grim -g "$(slurp)" - | wl-copy 
-set $lock swaylock -f -e --image $right_monitor:$bg_right --image $left_monitor:$bg_left
+set $lock swaylock -f -e --image $right_monitor:$bg_right --image $left_monitor:$bg_left --image $laptop_monitor:$bg_laptop
 
 set {
     $game inhibit_idle focus; move to workspace 10; floating enable; border none; fullscreen enable; shadows disable
@@ -24,6 +26,9 @@ for_window {
     [class="steam"] move to workspace 5
     [class="steam_app.*"] $game
     [instance="steam_app.*"] $game
+    [class="hmi_qt"] floating enable
+    [app_id="hmi_qt"] floating enable
+    [app_id="qt_hmi_test"] floating enable
 }
 
 # Home row direction keys, like vim
@@ -40,12 +45,14 @@ exec --no-startup-id {
 ## Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs 
 exec_always pkill shikane; exec shikane 
-output $right_monitor background $bg_right fill 
-output $left_monitor background $bg_left fill 
+exec_always swaybg -o $right_monitor -i $bg_right -m fill \
+                  -o $left_monitor -i $bg_left -m fill \
+                  -o $laptop_monitor -i $bg_laptop -m fill
 
 exec_always pkill udiskie; exec udiskie --no-automount --notify --tray
 exec sway-audio-idle-inhibit
 exec dunst
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # HiDPi mouse scaling issue: 
 # https://github.com/swaywm/sway/issues/6931
@@ -61,8 +68,8 @@ exec_always {
 }
 
 ### BACKLIGHT commands
-bindsym XF86MonBrightnessUp exec --no-startup-id /home/jmiv/bin/jm_backlight/bright_up.sh
-bindsym XF86MonBrightnessDown exec --no-startup-id /home/jmiv/bin/jm_backlight/bright_down.sh
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set -5% 
 
 ### Audio configuration
 bindsym --locked XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% 
@@ -76,6 +83,7 @@ bindsym --locked XF86AudioPrev exec playerctl previous
 bindsym $mod+Alt+Shift+S exec $save_screenclip
 bindsym $mod+Shift+S exec $clip_screenclip
 #bindsym $mod+Alt+Print exec $save_screenshot
+bindsym $mod+u exec grim -g "3969,669 802x483" ~/screenshots/ui-images/ui-capture-$(date +"%Y-%m-%d_%H-%M-%S").png
 
 # Mouse settings
 input "1133:16505:Logitech_G_Pro" { 
@@ -170,17 +178,16 @@ exec swayidle -w \
     bindsym $mod+Shift+9 move container to workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10
 
-# set which workspaces display on which monitors
-workspace 1 output $left_monitor $right_monitor
-workspace 2 output $left_monitor $right_monitor
-workspace 3 output $left_monitor $right_monitor
-workspace 4 output $left_monitor $right_monitor
-workspace 5 output $right_monitor 
-workspace 6 output $right_monitor
-workspace 7 output $right_monitor
-workspace 8 output $right_monitor
-workspace 9 output $right_monitor
-workspace 10 output $right_monitor
+    workspace 1 output $laptop_monitor
+    workspace 2 output $left_monitor $laptop_monitor
+    workspace 3 output $left_monitor $laptop_monitor
+    workspace 4 output $left_monitor $laptop_monitor
+    workspace 5 output $left_monitor $laptop_monitor
+    workspace 6 output $right_monitor $laptop_monitor
+    workspace 7 output $right_monitor $laptop_monitor
+    workspace 8 output $right_monitor $laptop_monitor
+    workspace 9 output $right_monitor $laptop_monitor
+    workspace 10 output $right_monitor $laptop_monitor
 
 #
 # Layout stuff:

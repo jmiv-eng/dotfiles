@@ -1,6 +1,6 @@
 [user]
-    email = jami1063@colorado.edu
-    name = jmiv-eng
+	email = jami1063@colorado.edu
+	name = jmiv-eng
 [core]
 	editor = nvim
 [init]
@@ -9,3 +9,9 @@
 	helper = cache --timeout=3600
 #[url "git@github.com:"]
 #	insteadOf = https://github.com/
+[color]
+	ui = auto
+[push]
+	autoSetupRemote = true
+[branch]
+	autoSetupMerge = always

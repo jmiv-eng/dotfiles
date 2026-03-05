@@ -24,3 +24,11 @@ alias vim="nvim"
 alias vi="nvim"
 alias rm="echo 'This is not the command you are looking for'; false"
 #alias ssh='TERM=xterm-256color ssh -x'
+
+# Try to detect the most recent active ssh-agent socket
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  sock=$(find /tmp/ssh-* -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
+  if [ -n "$sock" ]; then
+    export SSH_AUTH_SOCK="$sock"
+  fi
+fi

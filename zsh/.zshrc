@@ -8,9 +8,6 @@ fi
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-ZSH=/usr/share/oh-my-zsh/
-
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -86,7 +83,7 @@ plugins=(git)
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -98,19 +95,38 @@ plugins=(git)
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 #
+alias ls='ls --color=auto'
+alias ll='ls -lav --ignore=.. --color=auto'   # show long listing of all except ".."
+alias l='ls -lav --ignore=.?* --color=auto'   # show long listing but no hidden dotfiles except "."
 alias vim="nvim"
 alias vi="nvim"
 alias rm="echo 'This is not the command you are looking for'; false"
+alias cl="clear"
+alias sudovim='sudo -E nvim -u /home/jmiv/.config/nvim/init.lua'
 
 ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
 fi
 
-source $HOME/.zprofile
-source $ZSH/oh-my-zsh.sh
+# Source oh-my-zsh only if it exists
+[[ -f /usr/share/oh-my-zsh/oh-my-zsh.sh ]] && source /usr/share/oh-my-zsh/oh-my-zsh.sh
 
+# Source cargo env only if it exists
+[[ -f ~/.cargo/env ]] && source ~/.cargo/env
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-. "$HOME/.cargo/env"
+
+
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+  # Try to find the most recent agent socket
+  sock=$(find /tmp/ssh-* -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
+  if [[ -n "$sock" ]]; then
+    export SSH_AUTH_SOCK="$sock"
+  else
+    # Start a new agent if none is found
+    eval "$(ssh-agent -s)" > /dev/null
+  fi
+fi
+
