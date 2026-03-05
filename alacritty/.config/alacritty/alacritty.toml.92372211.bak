@@ -42,15 +42,15 @@ TERM = "alacritty"
 size = 12.0
 
 [font.bold]
-family = "MesloLGS NF"
+family = "Mono"
 style = "Bold"
 
 [font.bold_italic]
-family = "MesloLGS NF"
+family = "Mono"
 style = "Bold Italic"
 
 [font.italic]
-family = "MesloLGS NF"
+family = "Mono"
 style = "Italic"
 
 [font.normal]
@@ -73,8 +73,3 @@ opacity = 0.9
 live_config_reload = true
 
 [terminal]
-
-[[keyboard.bindings]]
-key = "Return"
-mods = "Shift"
-chars = "\u001B\r"

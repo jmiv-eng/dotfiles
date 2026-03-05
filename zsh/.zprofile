@@ -23,6 +23,7 @@ alias vim="nvim"
 alias vi="nvim"
 alias rm="echo 'This is not the command you are looking for'; false"
 alias cl="clear"
+alias sudovim="sudo -E nvim -u /home/jmiv/.config/nvim/init.lua"
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 

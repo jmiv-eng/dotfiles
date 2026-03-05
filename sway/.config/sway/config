@@ -43,9 +43,10 @@ exec_always pkill shikane; exec shikane
 output $right_monitor background $bg_right fill 
 output $left_monitor background $bg_left fill 
 
-exec_always pkill udiskie; exec udiskie --no-automount --notify --tray
-exec sway-audio-idle-inhibit
-exec dunst
+exec_always "pkill udiskie; udiskie --no-automount --notify --tray"
+exec_always "pkill dunst; dunst"
+exec_always ~/bin/media-notify.sh
+exec_always "pkill sway-audio-idle-inhibit; sway-audio-idle-inhibit"
 
 # HiDPi mouse scaling issue: 
 # https://github.com/swaywm/sway/issues/6931
