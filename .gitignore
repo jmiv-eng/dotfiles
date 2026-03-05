@@ -1,3 +1,8 @@
 tags
 kanshi/.config/kanshi/config
 nvim/.config/nvim/plugged/
+nvim_old/
+*.bak
+bin/bin/hammer
+bin/bin/host_terminal
+.claude/

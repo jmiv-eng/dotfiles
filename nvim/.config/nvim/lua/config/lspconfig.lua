@@ -54,7 +54,14 @@ end
 local servers = {
   clangd = {},
   pyright = {},
-  rust_analyzer = {},
+  rust_analyzer = {
+    settings = {
+      ['rust-analyzer'] = {
+        cargo = { allFeatures = true },
+        procMacro = { enable = true },
+      },
+    }
+  },
   cmake = {},
   jsonls = {},
   bashls = {},
