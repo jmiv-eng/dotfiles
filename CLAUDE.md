@@ -20,7 +20,7 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). E
 |---|---|---|
 | vu | Nvidia | Work laptop (BOE 3840x2160 + Samsung ultrawide dock) |
 | wave | Nvidia | Work laptop (1080p + triple-monitor dock) |
-| — | Intel | Home laptop |
+| ace | Intel | Home laptop |
 | jarvis | AMD | Home PC (LG 27GL850 144Hz + Dell U2715H portrait) |
 
 All machines run Arch Linux + Sway (Wayland).
