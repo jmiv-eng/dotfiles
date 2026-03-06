@@ -5,17 +5,18 @@
 
     "modules-left": [
         "sway/workspaces",
-        "sway/mode"
+        "sway/mode",
+        "cpu",
+        "temperature#cpu",
+        "temperature#gpu"
     ],
-    "modules-center": [],
+    "modules-center": [
+	],
     "modules-right": [
         "pulseaudio",
         "custom/sway_audio_idle_inhibit",
         "network",
-        "cpu",
         "memory",
-        "temperature",
-        "custom/gpu-temp",
         "battery",
         "clock",
         "tray"
@@ -42,18 +43,21 @@
         "format": "{}% "
     },
 
-    "temperature": {
+    "temperature#cpu": {
+        "hwmon-path": "/sys/class/hwmon/hwmon1/temp1_input",
         "critical-threshold": 80,
         "format": "{temperatureC}°C {icon}",
         "format-critical": "{temperatureC}°C {icon}",
         "format-icons": ["", "", ""]
     },
 
-    "custom/gpu-temp": {
-        "exec": "cat /sys/class/hwmon/hwmon0/temp1_input | awk '{printf \"%.0f°C\", $1/1000}'",
-        "exec-if": "test -d /sys/devices/pci0000:00/0000:00:03.1/0000:0a:00.0/hwmon",
-        "interval": 5,
-        "format": "{}  ",
+    "temperature#gpu": {
+        "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:03.1/0000:0a:00.0/0000:0b:00.0/0000:0c:00.0/hwmon",
+        "input-filename": "temp1_input",
+        "critical-threshold": 80,
+        "format": "{temperatureC}°C ",
+        "format-critical": "{temperatureC}°C ",
+        "interval": 2,
         "tooltip": true
     },
 
