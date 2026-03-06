@@ -55,6 +55,7 @@ seat * xcursor_theme capitaine-cursors 30
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Adwaita-dark'
+    gsettings set $gnome-schema color-scheme 'prefer-dark'
     gsettings set $gnome-schema icon-theme 'la-capitaine-icon-theme'
     gsettings set $gnome-schema cursor-theme 'capitaine-cursors'
     gsettings set $gnome-schema cursor-size '30'
