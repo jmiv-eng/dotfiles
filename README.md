@@ -1,18 +1,59 @@
 # dotfiles
-This is a repository containing my various dotfiles. There is a good [youtube video](https://youtu.be/CFzEuBGPPPg) by DevInsideYou explaining how to sync these dotfiles using GNU Stow and git across multiple systems. Stow is a symbolic link management utility. 
 
-I would recommend cloning the dotfiles repository in your $HOME (~) directory. Then, you can `cd ~/dotfiles`. From there, there are several basic commands available, outlined below. Note that the `-n` flag, present in all commands below implements simulation mode and so it will output what it will do instead of modifying the filesystem:
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). One branch (`main`), all machines.
 
-Stow the packages specified in `<dir>` into the target `~`. This will create symlinks for dotfiles from your target directory (~) to their repository versions (thus your system inherits the dotfiles in `<dir>`):
+---
 
-`stow -nvSt ~ <dir>`
+## Packages
 
-Unstow the packages specified in `<dir>` into the target `~`. This deletes the symlinks for dotfiles from your target directory (~). The repository versions are still there, however the symlinks are gone, clearing your systems dotfiles which were pointing to the files in `<dir>`:
+| Package | Description |
+|---|---|
+| `shell` | Unified shell environment (.zprofile, .zshrc, .bashrc, .bash_profile, .p10k.zsh) |
+| `sway` | Sway window manager (unified config + local.conf include) |
+| `waybar` | Wayland status bar (exec-if for hardware-conditional modules) |
+| `shikane` | Display profile management (all machines' profiles in one file) |
+| `alacritty` | Terminal emulator (JetBrainsMono Nerd Font) |
+| `nvim` | Neovim configuration |
+| `git` | Git configuration |
+| `wofi` | Wayland application launcher |
+| `swaylock` | Screen lock |
+| `dunst` | Notification daemon |
+| `bin` | Custom scripts and executables |
+| `ranger` | Terminal file manager |
+| `legacy/` | Old configs kept for reference (i3, i3blocks, kanshi, rofi, desktop_xorg) |
 
-`stow -nvDt ~ <dir>`
+---
 
-Adopt changes from existing dotfiles (use with care!) - moves existing files to dotfiles repo and creates a symlink from their original counterparts to the repository versions. 
+## Setup
 
-`stow --adopt -nvSt ~ <dir>`
+```bash
+git clone <repo-url> ~/dotfiles
+cd ~/dotfiles
+stow shell sway waybar shikane alacritty nvim git wofi swaylock dunst bin ranger
+cp ~/.config/sway/local.conf.example ~/.config/sway/local.conf
+# Edit local.conf with your monitor names, wallpapers, and workspace mapping
+```
 
-See `man stow` for more details. 
+### Machine-specific config
+
+Sway loads `~/.config/sway/local.conf` for machine-specific values (monitor names, wallpapers, workspace mapping, lock screen images). This file is not in git — copy from `local.conf.example` and customize per machine.
+
+GPU detection happens in `.zprofile` / `.bash_profile` via hostname case statement. Nvidia machines get `--unsupported-gpu` and related env vars.
+
+---
+
+## Stow Commands
+
+| Command | Description |
+|---|---|
+| `stow <pkg>` | Create symlinks for a package |
+| `stow -D <pkg>` | Remove symlinks for a package |
+| `stow -R <pkg>` | Restow (unstow + stow) |
+| `stow --adopt <pkg>` | Adopt existing files into the repo |
+
+---
+
+## Resources
+
+- [GNU Stow Manual](https://www.gnu.org/software/stow/manual/stow.html)
+- [DevInsideYou — Dotfiles with GNU Stow](https://youtu.be/CFzEuBGPPPg) (YouTube)

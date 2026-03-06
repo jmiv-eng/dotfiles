@@ -1,13 +1,18 @@
 [user]
-    email = jake@vutility.com
-    name = jake-vu
-    #email = jami1063@colorado.edu
-    #name = jmiv-afk
+	name = jmiv-eng
+	email = github@jmiv.dev
 [core]
 	editor = nvim
 [init]
-	defaultBranch = master
+	defaultBranch = main
 [credential]
 	helper = cache --timeout=3600
-[url "git@github.com:"]
-	insteadOf = https://github.com/
+[color]
+	ui = auto
+[pull]
+	rebase = true
+[push]
+	default = current
+	autoSetupRemote = true
+[branch]
+	autoSetupMerge = always

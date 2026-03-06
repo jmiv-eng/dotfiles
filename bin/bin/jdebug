@@ -4,6 +4,7 @@ usage()
 {
     echo "Usage: $0 [-d <voltdrop|core>] [-r]"
     echo "Options: -d, specifies the device voltdrop or core"
+    echo "         -f, specifies the filename to debug"
     echo "         -r, reset all"
     exit 0
 }
@@ -31,8 +32,10 @@ shift $((OPTIND-1))
 
 if [[ $DEVICE == "voltdrop" ]]; then
 
-    target_file=$(find . -type f -name VoltDrop.elf)
-    echo "VoltDrop.elf found: ${target_file}"
+    #target_file=$(find . -type f -name voltdrop)
+    target_file="./target/thumbv6m-none-eabi/release/voltdrop"
+    #target_file=$(find ./target/thumbv6m-none-eabi/release -type f -exec file {} \; | grep "ELF 32-bit LSB executable" | awk -F: '{print $1}')
+    echo "voltdrop ELF found: ${target_file}"
 
     echo "Checking for running instance of JLinkGDBServer"
     jlink_cmd="JLinkGDBServer -select USB -device stm32g070kb -if SWD -speed 4000"
@@ -56,5 +59,32 @@ if [[ $DEVICE == "voltdrop" ]]; then
     echo "${gdb_cmd}"
     ${TERM} -e ${gdb_cmd} & 
 fi
+
+if [[ $DEVICE == "core" ]]; then
+    target_file=$(find ./build/ -type f -exec file {} \; | grep "ELF 32-bit LSB executable" | awk -F: '{print $1}')
+    echo "nrf52832_xxaa.out found: ${target_file}"
+
+    echo "Checking for running instance of JLinkGDBServer"
+    jlink_cmd="JLinkGDBServer -device nRF52832_xxAB -if SWD -speed 4000 -autoconnect"
+    jlink_proc=$(pgrep --list-full ${TERM} | awk '/JLinkGDBServer/ {print $1}')
+
+    echo "Checking for running instance of arm-none-eabi-gdb"
+    gdb_cmd="arm-none-eabi-gdb -x ~/vutility/gdbinit_nrf -tui ${target_file}"
+    gdb_proc=$(pgrep --list-full ${TERM} | awk '/arm-none-eabi-gdb/ {print $1}')
+
+    if [[ ${jlink_proc} ]]; then
+        echo "Running process found, restarting: ${jlink_proc}"
+        kill -s SIGTERM ${jlink_proc}
+    fi
+    echo "${jlink_cmd}"
+    ${TERM} -e ${jlink_cmd} &
+
+    if [[ ${gdb_proc} ]]; then
+        echo "Running process found, restarting: ${gdb_proc}"
+        kill -s SIGTERM ${gdb_proc}
+    fi
+    echo "${gdb_cmd}"
+    ${TERM} -e ${gdb_cmd} & 
+fi 
 
 exit 1

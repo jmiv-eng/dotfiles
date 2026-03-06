@@ -1,0 +1,8 @@
+// Optional: copy to ~/.config/waybar/machine.json for machine-specific overrides.
+// First-defined wins, so values here take priority over the stowed config.
+// If this file doesn't exist, waybar uses the defaults from config.
+//
+// Example: reorder modules-right for a desktop with GPU temp
+// {
+//     "modules-right": ["pulseaudio", "custom/sway_audio_idle_inhibit", "network", "cpu", "memory", "temperature", "custom/gpu-temp", "clock", "tray"]
+// }

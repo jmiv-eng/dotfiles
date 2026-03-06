@@ -9,3 +9,4 @@ halign=fill
 orientation=vertical
 content_halign=fill
 drun-display_generic=true
+term=alacritty

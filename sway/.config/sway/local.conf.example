@@ -1,0 +1,29 @@
+# Copy this to ~/.config/sway/local.conf and fill in your values.
+# This file is NOT managed by stow — it stays machine-local.
+
+# Monitor names (run: swaymsg -t get_outputs)
+# Define variables for your monitors, then use them below.
+# set $left DP-4
+# set $right DP-3
+# set $laptop eDP-1
+
+# Wallpapers (one output line per monitor)
+# output $left background ~/pictures/backgrounds/wallpaper.jpg fill
+# output $right background ~/pictures/backgrounds/wallpaper.jpg fill
+
+# Lock screen (override $lock with per-monitor images)
+# set $lock swaylock -f -e --image $left:~/pictures/backgrounds/wallpaper.jpg --image $right:~/pictures/backgrounds/wallpaper.jpg
+
+# Startup workspace
+set $startup_workspace 1
+
+# Workspace-to-monitor mapping:
+# workspace 1 output $left
+# workspace 2 output $left
+# workspace 5 output $right
+
+# Machine-specific window rules:
+# for_window [class="hmi_qt"] floating enable
+
+# Machine-specific keybindings:
+# bindsym $mod+u exec grim -g "3969,669 802x483" ~/screenshots/ui-capture-$(date +"%Y-%m-%d_%H-%M-%S").png
