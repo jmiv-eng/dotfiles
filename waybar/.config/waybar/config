@@ -31,7 +31,9 @@
     "clock": {
         "format": "{:%H:%M:%S %Y-%m-%d}",
         "interval": 1,
-        "max-length": 35
+        "max-length": 35,
+        "timezones": ["", "Etc/UTC"],
+        "tooltip-format": "UTC {tz_list}"
     },
 
     "cpu": {
