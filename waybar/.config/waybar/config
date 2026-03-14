@@ -104,7 +104,7 @@
             "phone": "",
             "portable": "",
             "car": "",
-            "default": ["", "", ""]
+            "default": [" ", " ", " "]
         },
         "on-click": "pavucontrol"
     },
@@ -115,9 +115,9 @@
         "exec-if": "which sway-audio-idle-inhibit",
         "return-type": "json",
         "format-icons": {
-            "output": "",
-            "input": "",
-            "output-input": "  ",
+            "output": " ",
+            "input": " ",
+            "output-input": "   ",
             "none": ""
         }
     }
