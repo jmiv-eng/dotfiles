@@ -6,13 +6,15 @@
 [init]
 	defaultBranch = main
 [credential]
-	helper = cache --timeout=3600
+	helper = store
 [color]
 	ui = auto
 [pull]
-	rebase = true
+	rebase = false
 [push]
 	default = current
 	autoSetupRemote = true
 [branch]
 	autoSetupMerge = always
+[url "git@github.com:the-real-vutility"]
+	insteadOf = https://github.com/the-real-vutility
