@@ -18,7 +18,7 @@ return {
     { "<leader>3", function() require("harpoon"):list():select(3) end, desc = "harpoon to file 3", },
     { "<leader>4", function() require("harpoon"):list():select(4) end, desc = "harpoon to file 4", },
     { "<leader>5", function() require("harpoon"):list():select(5) end, desc = "harpoon to file 5", },
-    { "<leader>P", function() require("harpoon"):list():select(5) end, desc = "harpoon to file 5", },
-    { "<leader>N", function() require("harpoon"):list():select(5) end, desc = "harpoon to file 5", },
+    { "<leader>P", function() require("harpoon"):list():prev() end, desc = "harpoon prev file", },
+    { "<leader>N", function() require("harpoon"):list():next() end, desc = "harpoon next file", },
   },
 }

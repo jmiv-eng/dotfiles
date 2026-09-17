@@ -61,6 +61,22 @@ legacy/            old configs for reference (i3, i3blocks, kanshi, rofi, deskto
 - `~/.config/waybar/machine.json` — optional waybar overrides
 - `~/.vutility_secure` — work-specific secrets/exports
 
+## System prerequisites
+
+Packages that must be installed for a stowed config to work (all in the official Arch repos):
+
+| Package | Needed by | Symptom if missing |
+|---|---|---|
+| `tree-sitter-cli` | `nvim` | Parsers fail to compile. Neovim falls back to the stale system parsers from Arch's `tree-sitter-*` packages under `/usr/lib/tree_sitter/`, which mismatch Neovim's bundled queries and throw errors like `Query error: Invalid field name "operator"` on every buffer. |
+
+### Neovim
+
+- Plugin manager is lazy.nvim. `init.lua` only bootstraps it — every plugin is one file under `lua/plugins/` with its configuration inlined in the spec. There is deliberately no `lua/config/` directory; keeping a plugin's spec and its setup in separate files is what let them drift out of sync.
+- nvim-treesitter tracks the **`main`** branch. Upstream froze `master` for backward compatibility only (one commit in the last year, vs ~276 on `main`), and `main` is now the GitHub default. The two have incompatible APIs: `main` has no `ensure_installed` setup option, no `highlight`/`indent`/`incremental_selection` modules, and does not take textobject keymaps in `setup`.
+- Because `main` dropped `incremental_selection`, the `<c-space>` / `<c-s>` / `<M-space>` bindings are reimplemented directly on `vim.treesitter` in `lua/plugins/treesitter.lua`.
+- Parsers install to `~/.local/share/nvim/site/`. Passing `install_dir` to `require('nvim-treesitter').setup{}` is what prepends that directory to the runtimepath, which is how locally built parsers win over the system ones.
+- `lazy-lock.json` is committed and pins exact plugin commits — that is the cross-machine reproducibility mechanism. nvim-treesitter publishes no release tags on `main`, so there is no version to pin instead.
+
 ## Key Conventions
 
 - Stow target is `$HOME` (run `stow <pkg>` from `~/dotfiles`)
