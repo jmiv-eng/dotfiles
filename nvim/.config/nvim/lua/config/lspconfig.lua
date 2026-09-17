@@ -1,6 +1,10 @@
 -- [[ Configure LSP ]]
---  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+-- Keymaps are registered via LspAttach so they only apply to buffers with
+-- an active language server. This replaces the old on_attach callback which
+-- is not supported by the vim.lsp.config API.
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local bufnr = event.buf
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -41,7 +45,8 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
-end
+  end,
+})
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -82,16 +87,17 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
-  end
-}
+-- Configure each server using the Neovim 0.11+ native vim.lsp.config API,
+-- which replaces the deprecated require('lspconfig')[name].setup() pattern.
+for server_name, settings in pairs(servers) do
+  vim.lsp.config(server_name, {
+    capabilities = capabilities,
+    settings = settings,
+    filetypes = settings.filetypes,
+  })
+end
+
+vim.lsp.enable(vim.tbl_keys(servers))
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
