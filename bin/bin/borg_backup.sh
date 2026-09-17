@@ -29,6 +29,8 @@ borg create                          \
     --exclude 'var/spool'            \
     --exclude 'var/log'              \
     --exclude 'var/cache'            \
+    --exclude 'home/*/.local/share/Steam' \
+    --exclude 'home/*/.local/share/Trash' \
     ::'{hostname}-{now}'             \
     /etc                             \
     /var                             \

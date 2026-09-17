@@ -16,3 +16,5 @@
 	autoSetupRemote = true
 [branch]
 	autoSetupMerge = always
+[url "git@github.com:the-real-vutility/"]
+    insteadOf = https://github.com/the-real-vutility/
