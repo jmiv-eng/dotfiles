@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+B="$HOME/.config/r2modmanPlus-local/Valheim/profiles/HeimTime/BepInEx"
+dirs=()
+for d in core plugins config patchers; do [[ -d "$B/$d" ]] && dirs+=("$d"); done
+echo "Syncing: ${dirs[*]}"
+read -rp "This restarts the server and kicks anyone online. Continue? [y/N] " a
+[[ "$a" == [yY] ]] || exit 1
+tar czf - -C "$B" --exclude='*.old' --exclude='LogOutput.log' "${dirs[@]}" \
+  | ssh optimus 'pct exec 109 -- /usr/local/sbin/apply-mods'

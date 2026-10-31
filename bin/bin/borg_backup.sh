@@ -15,6 +15,11 @@ info "Starting backup to $BORG_REPO"
 
 # Backup the most important directories into an archive named after
 # the machine this script is currently running on:
+#
+# Steam: skip ~/.local/share/Steam except userdata (per-account saves,
+# including the local copies of Steam Cloud saves). Proton prefixes, where
+# Windows games keep their saves, live on /bulk and are listed separately.
+# The include must come before the exclude: borg uses the first match.
 
 borg create                          \
     --verbose                        \
@@ -29,12 +34,14 @@ borg create                          \
     --exclude 'var/spool'            \
     --exclude 'var/log'              \
     --exclude 'var/cache'            \
-    --exclude 'home/*/.local/share/Steam' \
+    --pattern '+home/*/.local/share/Steam/userdata' \
+    --pattern '-home/*/.local/share/Steam' \
     --exclude 'home/*/.local/share/Trash' \
     ::'{hostname}-{now}'             \
     /etc                             \
     /var                             \
-    /home                            
+    /home                            \
+    /bulk/SteamLibrary/steamapps/compatdata                            
 
 
 backup_exit=$?

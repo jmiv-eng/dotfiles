@@ -61,14 +61,9 @@ unset _p10k_theme
 # Cargo
 [[ -f ~/.cargo/env ]] && source ~/.cargo/env
 
-# SSH agent detection
-if [[ -z "$SSH_AUTH_SOCK" ]]; then
-  sock=$(find /tmp -maxdepth 2 -path '/tmp/ssh-*' -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
-  if [[ -n "$sock" ]]; then
-    export SSH_AUTH_SOCK="$sock"
-  else
-    eval "$(ssh-agent -s)" > /dev/null
-  fi
+# SSH agent: gcr-ssh-agent (socket-activated by systemd)
+if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
 fi
 
 # Local overrides
