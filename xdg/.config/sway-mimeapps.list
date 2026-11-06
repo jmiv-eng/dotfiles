@@ -1,0 +1,4 @@
+# Default apps for sway sessions. Checked before mimeapps.list (XDG_CURRENT_DESKTOP
+# contains "sway"), and apps never write to it.
+[Default Applications]
+inode/directory=thunar.desktop

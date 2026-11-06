@@ -1,0 +1,6 @@
+# Makes Thunar the org.freedesktop.FileManager1 provider ("Show in folder").
+# User service files take precedence over system ones from other file managers.
+[D-BUS Service]
+Name=org.freedesktop.FileManager1
+Exec=/usr/bin/Thunar --gapplication-service
+SystemdService=thunar.service

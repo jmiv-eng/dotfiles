@@ -1,0 +1,14 @@
+# XDG user directories (lowercase). user-dirs.conf keeps xdg-user-dirs-update
+# from rewriting this file.
+# No desktop on sway: anything that starts on "Desktop" (e.g. file pickers) opens ~
+XDG_DESKTOP_DIR="$HOME/"
+XDG_DOWNLOAD_DIR="$HOME/downloads"
+XDG_TEMPLATES_DIR="$HOME/templates"
+XDG_PUBLICSHARE_DIR="$HOME/public"
+XDG_DOCUMENTS_DIR="$HOME/documents"
+XDG_MUSIC_DIR="$HOME/music"
+XDG_PICTURES_DIR="$HOME/pictures"
+XDG_VIDEOS_DIR="$HOME/videos"
+XDG_PROJECTS_DIR="$HOME/projects"
+# Non-standard key, read by `xdg-user-dir SCREENSHOTS`
+XDG_SCREENSHOTS_DIR="$HOME/screenshots"

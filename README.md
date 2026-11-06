@@ -20,6 +20,10 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). O
 | `dunst` | Notification daemon |
 | `bin` | Custom scripts and executables |
 | `ranger` | Terminal file manager |
+| `zathura` | PDF viewer (vimtex's viewer) |
+| `xdg` | Lowercase XDG user dirs (`~/downloads`, `~/documents`, ...) + sway default apps (`sway-mimeapps.list`) |
+| `fish` | Fish shell (self-contained; p10k-style prompt, zsh aliases carried over) |
+| `thunar` | Thunar custom actions + D-Bus pin so Thunar is the only file manager apps open |
 | `legacy/` | Old configs kept for reference (i3, i3blocks, kanshi, rofi, desktop_xorg) |
 
 ---
@@ -29,7 +33,7 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). O
 ```bash
 git clone <repo-url> ~/dotfiles
 cd ~/dotfiles
-stow shell sway waybar shikane alacritty nvim git wofi swaylock dunst bin ranger
+stow shell sway waybar shikane alacritty nvim git wofi swaylock dunst bin ranger zathura xdg fish thunar
 cp ~/.config/sway/local.conf.example ~/.config/sway/local.conf
 # Edit local.conf with your monitor names, wallpapers, and workspace mapping
 ```

@@ -2,6 +2,9 @@
     "include": ["~/.config/waybar/machine.json"],
     "layer": "top",
     "position": "top",
+    // Let the left/right groups use the empty centre (otherwise each is capped
+    // at half the bar width)
+    "fixed-center": false,
 
     "modules-left": [
         "sway/workspaces",
@@ -46,7 +49,11 @@
     },
 
     "temperature#cpu": {
-        "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+        // First existing path wins: AMD k10temp, then Intel coretemp
+        "hwmon-path-abs": [
+            "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+            "/sys/devices/platform/coretemp.0/hwmon"
+        ],
         "input-filename": "temp1_input",
         "critical-threshold": 80,
         "format": "{temperatureC}°C {icon} ",
@@ -57,6 +64,9 @@
     "temperature#gpu": {
         "hwmon-path-abs": "/sys/class/drm/card1/device/hwmon",
         "input-filename": "temp1_input",
+        // No fallback zone: without the AMD GPU path the module disables itself
+        // instead of reading thermal_zone0
+        "thermal-zone": 999,
         "critical-threshold": 80,
         "format": "{temperatureC}°C {icon}  ",
         "format-critical": "{temperatureC}°C {icon}",
@@ -84,25 +94,29 @@
     },
 
     "network": {
-        "format-wifi": "({signalStrength}%) ",
-        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
-        "format-linked": "{ifname} (No IP) ",
+        // IP + Wi-Fi/ethernet icon; details in the tooltip, click for ifname/cidr
+        "format-wifi": "{ipaddr} ",
+        "format-ethernet": "{ipaddr} 󰈀",
+        "format-linked": "No IP",
         "format-disconnected": "⚠",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname}: {ipaddr}/{cidr}",
+        "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}",
+        "tooltip-format-disconnected": "Disconnected",
         "max-length": 30
     },
 
     "pulseaudio": {
         "format": "{volume}% {icon} {format_source}",
         "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
+        "format-bluetooth-muted": "󰝟 {icon} {format_source}",
+        "format-muted": "󰝟 {format_source}",
         "format-source": "{volume}% ",
         "format-source-muted": "",
         "format-icons": {
             "headphone": "",
-            "hands-free": "",
-            "headset": "",
+            "hands-free": "󰋎",
+            "headset": "󰋎",
             "phone": "",
             "portable": "",
             "car": "",

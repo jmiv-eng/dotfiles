@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Open Terminal Here</name>
+	<submenu></submenu>
+	<unique-id>1793993603822082-1</unique-id>
+	<command>sh -c 'cd &quot;$1&quot; &amp;&amp; exec xdg-terminal-exec' sh %f</command>
+	<description>Open $TERMINAL (set from local.conf) in this folder</description>
+	<range></range>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<directories/>
+</action>
+</actions>

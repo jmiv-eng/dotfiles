@@ -29,5 +29,4 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 alias python='python3'
 alias vim="nvim"
 alias vi="nvim"
-alias rm="echo 'This is not the command you are looking for'; false"
 alias ssh='TERM=xterm-256color ssh -x'

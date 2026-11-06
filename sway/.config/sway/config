@@ -1,15 +1,28 @@
 # Config for sway
 # Read `man 5 sway` for a complete reference.
 
-# Machine-specific values (monitors, wallpapers, workspace mapping)
-# Should be implemented on a per-computer / setup basis for best results
+# Per-machine switches. Defaults go before the include so local.conf can
+# override them (the last `set` wins).
+set $gsr_autostart yes
+# Terminal (must accept `-e CMD`) and the interactive shell it runs
+set $term alacritty
+set $shell zsh
+
+# Machine-specific values: monitors, wallpapers, lock screen, workspaces
 include ~/.config/sway/local.conf
 exec test -f ~/.config/sway/local.conf || notify-send -u critical "sway" "Missing ~/.config/sway/local.conf — implement from local.conf.example in dotfiles/sway/"
 
 ### Variables
 set $mod Mod4
-set $term alacritty
-set $menu wofi --show drun,run --allow-images -i
+
+# Environment for everything sway launches: TERMINAL and SHELL from the
+# switches above (login shell if $shell isn't installed), ~/bin first on PATH.
+# Terminals open through ~/bin/xdg-terminal-exec, which runs $TERMINAL with $SHELL.
+set $with_env env PATH=$HOME/bin:$PATH TERMINAL=$term SHELL=$(command -v $shell || echo $SHELL)
+set $open_term $with_env ~/bin/xdg-terminal-exec
+set $menu $with_env wofi --show drun,run --allow-images -i --term xdg-terminal-exec
+# Same variables for apps started over D-Bus/systemd (e.g. Thunar)
+exec_always $with_env dbus-update-activation-environment --systemd TERMINAL SHELL PATH
 set $save_screenshot grim -g ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png
 set $save_screenclip slurp | grim -g - ~/screenshots/scrn-$(date +"%Y-%m-%d_%H-%M-%S").png
 set $clip_screenclip exec grim -g "$(slurp)" - | wl-copy
@@ -39,7 +52,7 @@ for_window {
 
 ### Startup behavior
 exec --no-startup-id {
-    swaymsg "workspace $startup_workspace; exec $term"
+    swaymsg "workspace $startup_workspace; exec $open_term"
 }
 
 ### Output configuration
@@ -49,10 +62,7 @@ exec_always pkill shikane; exec shikane
 #   output <monitor> background <path> fill
 
 exec_always pkill udiskie; exec udiskie --no-automount --notify --tray
-# sway-audio-idle-inhibit is NOT exec'd here any more. It SIGABRTs now and then
-# in its logind-inhibit path, and a bare `exec` is fire-and-forget: one crash
-# left the screen locking mid-playback for the rest of the session. It now runs
-# supervised with Restart=always:  systemctl --user status sway-audio-idle-inhibit
+# sway-audio-idle-inhibit runs as a systemd user service, not from here
 exec_always ~/bin/media-notify.sh
 exec_always pkill dunst; exec dunst
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
@@ -70,17 +80,18 @@ exec_always {
 }
 
 ### Screen recording (gpu-screen-recorder)
-# $gsr_capture is defined in local.conf (monitor name, or "portal")
-# Desktop + mic are mixed into ONE track ("a|b"). Separate -a flags give separate
-# tracks, and most players (and Discord) only play the first one. Keep the quotes:
-# the command goes through sh, which would otherwise read | as a pipe.
+# Always-on replay buffer. local.conf sets $gsr_capture (monitor or "portal")
+# and can turn it off with `set $gsr_autostart no`.
+# "a|b" mixes desktop audio and mic into one track (quoted so sh doesn't pipe).
 set $gsr_clip_dir ~/screenshots/gsr_clips
 set $gsr_record_dir ~/screenshots/gsr_recording
 set $gsr_replay gpu-screen-recorder -w $gsr_capture -f 60 -r 90 -c mkv \
     -a "default_output|default_input" -bm cbr -q 50000 \
     -sc ~/bin/gsr.sh -o $gsr_clip_dir -ro $gsr_record_dir
 exec command -v gpu-screen-recorder >/dev/null || notify-send -u critical "sway" "gpu-screen-recorder not installed — replay buffer disabled"
-exec_always mkdir -p $gsr_clip_dir $gsr_record_dir; pkill -f ^gpu-screen-recorder; exec $gsr_replay
+# Single-quoted so it runs as one shell command (at startup sway splits
+# unquoted ';' into separate sway commands)
+exec_always 'mkdir -p $gsr_clip_dir $gsr_record_dir; pkill -f ^gpu-screen-recorder; [ $gsr_autostart = no ] || exec $gsr_replay'
 bindsym $mod+x exec pkill -RTMIN+2 -f ^gpu-screen-recorder || notify-send -u critical -a gpu-screen-recorder "Replay buffer isn't running"
 bindsym $mod+Shift+x exec ~/bin/gsr.sh
 
@@ -121,8 +132,8 @@ input "1267:32:Elan_TrackPoint" {
 }
 
 ### Key bindings
-bindsym $mod+Return exec $term
-bindsym $mod+Shift+Return exec $term -e ranger
+bindsym $mod+Return exec $open_term
+bindsym $mod+Shift+Return exec $open_term ranger
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec $menu
 floating_modifier $mod normal
@@ -137,11 +148,8 @@ gaps inner 4
 gaps outer 2
 
 ### Idle configuration
-# NOTE: the `before-sleep` line is load-bearing beyond locking on suspend.
-# swayidle only opens its logind D-Bus connection when a before-sleep/lock/unlock
-# event is configured. Without one it can never read logind's BlockInhibited
-# property, so it silently ignores idle inhibitors -- including the one
-# sway-audio-idle-inhibit takes while audio is playing. Don't remove it.
+# before-sleep also makes swayidle connect to logind, which it needs in order
+# to honour idle inhibitors (e.g. sway-audio-idle-inhibit while audio plays)
 exec swayidle -w \
     timeout 800 '$lock' \
     timeout 1000 'swaymsg "output * dpms off"' \

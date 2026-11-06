@@ -7,7 +7,6 @@ alias ll='ls -lav --ignore=..'
 alias l='ls -lav --ignore=.?*'
 alias vim="nvim"
 alias vi="nvim"
-alias rm="echo 'This is not the command you are looking for'; false"
 alias cl="clear"
 
 # Bash prompt
