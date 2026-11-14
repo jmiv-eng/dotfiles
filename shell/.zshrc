@@ -60,8 +60,9 @@ unset _p10k_theme
 # Cargo
 [[ -f ~/.cargo/env ]] && source ~/.cargo/env
 
-# SSH agent: gcr-ssh-agent (socket-activated by systemd)
-if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+# SSH agent: gcr-ssh-agent (socket-activated by systemd). Not over SSH, where
+# SSH_AUTH_SOCK may be a forwarded agent (.bashrc picks gcr if it's unset).
+if [[ -z "$SSH_CONNECTION" && -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
   export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
 fi
 

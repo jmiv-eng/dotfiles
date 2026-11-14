@@ -19,13 +19,18 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # Cargo
 [[ -f ~/.cargo/env ]] && source ~/.cargo/env
 
-# SSH agent detection
+# SSH agent, only when none is set (an SSH session may carry a forwarded one):
+# gcr-ssh-agent if it's running, else an existing agent socket, else a new agent
 if [[ -z "$SSH_AUTH_SOCK" ]]; then
-  sock=$(find /tmp -maxdepth 2 -path '/tmp/ssh-*' -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
-  if [[ -n "$sock" ]]; then
-    export SSH_AUTH_SOCK="$sock"
+  if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
   else
-    eval "$(ssh-agent -s)" > /dev/null
+    sock=$(find /tmp -maxdepth 2 -path '/tmp/ssh-*' -type s -user "$USER" -name 'agent.*' 2>/dev/null | xargs ls -t 2>/dev/null | head -n1)
+    if [[ -n "$sock" ]]; then
+      export SSH_AUTH_SOCK="$sock"
+    else
+      eval "$(ssh-agent -s)" > /dev/null
+    fi
   fi
 fi
 
