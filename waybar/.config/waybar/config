@@ -35,8 +35,33 @@
         "format": "{:%H:%M:%S %Y-%m-%d}",
         "interval": 1,
         "max-length": 35,
+        // "" is local time; other zones become {tz_list} rows in the tooltip
         "timezones": ["", "Etc/UTC"],
-        "tooltip-format": "UTC {tz_list}"
+        // Month calendar, then local time and UTC. {0:...} is the local time:
+        // explicit indexes, since a bare {:...} would take the next argument
+        "tooltip-format": "{calendar}\n\n<b>{0:%Z}</b>  {0:%H:%M:%S  %a %Y-%m-%d}\n{tz_list}",
+        "timezone-tooltip-format": "<b>{0:%Z}</b>  {0:%H:%M:%S  %a %Y-%m-%d}",
+        "calendar": {
+            "mode": "month",
+            // Months per scroll step. Setting it explicitly also makes the
+            // calendar return to this month when the pointer leaves the clock
+            "on-scroll": 1,
+            "format": {
+                "months": "<b>{}</b>",
+                "weekdays": "<span color='#bbccdd'>{}</span>",
+                "today": "<span color='#2b303b' bgcolor='#bbccdd'><b>{}</b></span>"
+            }
+        },
+        // Left-click: Thunderbird's calendar (focus it if open, then switch to
+        // the calendar tab). Launched through sway: waybar kills the processes
+        // it started whenever it reloads
+        "on-click": "swaymsg -q '[app_id=\"(?i)thunderbird\"] focus'; swaymsg -q exec 'thunderbird -calendar'",
+        // Scroll pages through months; right-click jumps back to this month
+        "actions": {
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down",
+            "on-click-right": "shift_reset"
+        }
     },
 
     "cpu": {
