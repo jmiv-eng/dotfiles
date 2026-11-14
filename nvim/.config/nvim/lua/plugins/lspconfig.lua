@@ -7,7 +7,8 @@ local servers = {
   clangd = {},
   pyright = {},
   rust_analyzer = {},
-  cmake = {},
+  -- CMake (neocmakelsp)
+  neocmake = {},
   jsonls = {},
   bashls = {},
   csharp_ls = {},
@@ -21,8 +22,7 @@ local servers = {
 }
 
 -- Keymaps are registered via LspAttach so they only apply to buffers with
--- an active language server. This replaces the old on_attach callback which
--- is not supported by the vim.lsp.config API.
+-- an active language server.
 local function on_attach(event)
   local bufnr = event.buf
 
@@ -98,13 +98,15 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-    -- Ensure the servers above are installed
+    -- Ensure the servers above are installed. automatic_enable is off because
+    -- vim.lsp.enable below starts exactly these servers; left on, it would also
+    -- start every other server Mason has installed (e.g. a replaced one).
     require('mason-lspconfig').setup {
       ensure_installed = vim.tbl_keys(servers),
+      automatic_enable = false,
     }
 
-    -- Configure each server using the Neovim 0.11+ native vim.lsp.config API,
-    -- which replaces the deprecated require('lspconfig')[name].setup() pattern.
+    -- Configure each server with Neovim's native vim.lsp.config API
     for server_name, settings in pairs(servers) do
       vim.lsp.config(server_name, {
         capabilities = capabilities,

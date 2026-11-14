@@ -17,6 +17,15 @@
 # Startup workspace
 set $startup_workspace 1
 
+# Terminal and interactive shell (defaults: alacritty, zsh)
+# set $term alacritty
+# set $shell fish
+
+# gpu-screen-recorder capture target (monitor name, or "portal")
+set $gsr_capture eDP-1
+# Turn off the always-on replay buffer
+# set $gsr_autostart no
+
 # Workspace-to-monitor mapping:
 # workspace 1 output $left
 # workspace 2 output $left

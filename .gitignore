@@ -7,3 +7,8 @@ bin/bin/host_terminal
 bin/bin/.repo/
 sway/.config/sway/local.conf
 .claude/
+# fish: per-machine state and overrides
+fish/.config/fish/fish_variables
+fish/.config/fish/local.fish
+# Thunar's generated keyboard shortcuts
+thunar/.config/Thunar/accels.scm

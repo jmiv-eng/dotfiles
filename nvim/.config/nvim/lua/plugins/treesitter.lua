@@ -1,10 +1,7 @@
 -- Highlight, edit, and navigate code.
 --
--- This tracks nvim-treesitter's `main` branch, which is a full rewrite of the
--- `master` branch: the `configs` module is gone, `ensure_installed` is not a
--- setup option, and the highlight/indent/incremental_selection modules no
--- longer exist. Parser installation is now an explicit call, and highlighting
--- is Neovim's built-in treesitter, started per buffer by hand.
+-- Tracks nvim-treesitter's `main` branch: parsers are installed with an explicit
+-- call, and highlighting/indent are started per buffer on FileType.
 
 local ensure_installed = {
   'bash', 'c', 'c_sharp', 'cpp', 'go', 'json', 'lua', 'markdown',
@@ -12,9 +9,7 @@ local ensure_installed = {
   'typescript', 'vim', 'vimdoc', 'yaml',
 }
 
--- `master`'s incremental_selection module has no equivalent on `main`, so this
--- is a compact reimplementation on top of core vim.treesitter that keeps the
--- old <c-space>/<c-s>/<M-space> bindings working.
+-- Incremental selection (<c-space>/<c-s>/<M-space>) on core vim.treesitter
 local incremental = {}
 do
   local stacks = {}
@@ -85,8 +80,7 @@ do
     end
   end
 
-  -- Grow to the nearest ancestor spanning more *lines* -- close enough to the
-  -- old module's notion of a scope.
+  -- Grow to the nearest ancestor spanning more lines (a "scope")
   function incremental.scope_incremental()
     local stack = buf_stack()
     local node = stack[#stack]
@@ -140,17 +134,16 @@ return {
     config = function()
       local ts = require('nvim-treesitter')
 
-      -- `main`'s setup accepts only `install_dir`. Passing it explicitly is
-      -- what prepends it to the runtimepath, which is how locally managed
-      -- parsers win over the out-of-sync system ones under /usr/lib.
+      -- install_dir is prepended to the runtimepath, so these parsers take
+      -- precedence over the system ones under /usr/lib
       ts.setup {
         install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site'),
       }
 
-      -- Replaces `ensure_installed`; no-ops for parsers already present.
+      -- Install missing parsers (no-op for ones already present)
       ts.install(ensure_installed)
 
-      -- Replaces the `highlight` and `indent` modules.
+      -- Start treesitter highlighting and indent per buffer
       vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('jmiv_treesitter', { clear = true }),
         callback = function(event)
@@ -177,8 +170,7 @@ return {
     'nvim-treesitter/nvim-treesitter-textobjects',
     branch = 'main',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    -- On `main` the setup table carries only behaviour flags -- keymaps are
-    -- no longer declared there, so they are defined below by hand.
+    -- setup takes behaviour flags only; the keymaps are defined below
     opts = {
       select = { lookahead = true },
       move = { set_jumps = true },

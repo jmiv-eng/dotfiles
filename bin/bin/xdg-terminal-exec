@@ -1,0 +1,32 @@
+#!/bin/sh
+# Open a terminal ($TERMINAL, falling back to alacritty) running CMD, or $SHELL
+# if no command is given. Used by the sway bindings, wofi and Thunar, and by
+# GLib to launch Terminal=true apps (GLib's own terminal list lacks alacritty).
+# Accepts --dir=DIR; other xdg-terminal-exec options are ignored.
+while [ $# -gt 0 ]; do
+    case $1 in
+        --dir=*) cd "${1#--dir=}" || exit ;;
+        --|-e) shift; break ;;
+        --*) ;;
+        *) break ;;
+    esac
+    shift
+done
+
+fallback=alacritty
+term=${TERMINAL:-$fallback}
+# TERMINAL=xdg-terminal-exec would make this script exec itself forever
+[ "${term##*/}" = xdg-terminal-exec ] && term=$fallback
+if ! command -v "$term" >/dev/null 2>&1; then
+    notify-send -u critical -a terminal "Terminal \"$term\" isn't installed" \
+        "Opening $fallback instead. Install it, or change \$term in ~/.config/sway/local.conf." \
+        2>/dev/null
+    term=$fallback
+fi
+
+# No command: run $SHELL explicitly, whatever the terminal's own default
+if [ $# -eq 0 ]; then
+    [ -n "${SHELL:-}" ] && exec "$term" -e "$SHELL"
+    exec "$term"
+fi
+exec "$term" -e "$@"

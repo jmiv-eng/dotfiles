@@ -2,7 +2,7 @@
 # gpu-screen-recorder instant replay control.
 #
 # Two entry points, dispatched on arguments:
-#   (no args)       picker    — bound to $mod+F9 in sway
+#   (no args)       picker    — bound to $mod+Shift+x in sway
 #   <path> <type>   save hook — invoked via gpu-screen-recorder's -sc option
 
 notify() {

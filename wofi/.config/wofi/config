@@ -9,4 +9,4 @@ halign=fill
 orientation=vertical
 content_halign=fill
 drun-display_generic=true
-term=alacritty
+term=xdg-terminal-exec

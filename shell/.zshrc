@@ -45,7 +45,6 @@ alias ll='ls -lav --ignore=.. --color=auto'
 alias l='ls -lav --ignore=.?* --color=auto'
 alias vim="nvim"
 alias vi="nvim"
-alias rm="echo 'This is not the command you are looking for'; false"
 alias cl="clear"
 
 ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
