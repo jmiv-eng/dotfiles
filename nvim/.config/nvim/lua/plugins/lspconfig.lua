@@ -98,9 +98,12 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-    -- Ensure the servers above are installed
+    -- Ensure the servers above are installed. automatic_enable is off because
+    -- vim.lsp.enable below starts exactly these servers; left on, it would also
+    -- start every other server Mason has installed (e.g. a replaced one).
     require('mason-lspconfig').setup {
       ensure_installed = vim.tbl_keys(servers),
+      automatic_enable = false,
     }
 
     -- Configure each server with Neovim's native vim.lsp.config API

@@ -5,7 +5,7 @@
 	<name>Open Terminal Here</name>
 	<submenu></submenu>
 	<unique-id>1793993603822082-1</unique-id>
-	<command>sh -c 'cd &quot;$1&quot; &amp;&amp; exec xdg-terminal-exec' sh %f</command>
+	<command>xdg-terminal-exec --dir=%f</command>
 	<description>Open $TERMINAL (set from local.conf) in this folder</description>
 	<range></range>
 	<patterns>*</patterns>

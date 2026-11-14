@@ -74,6 +74,7 @@ Packages that must be installed for a stowed config to work (all in the official
 
 | Package | Needed by | Symptom if missing |
 |---|---|---|
+| `jq` | `fish` (`conf.d/done.fish`) | On sway, done.fish can't tell which window is focused, so "long command finished" notifications never fire. |
 | `tree-sitter-cli` | `nvim` | Parsers fail to compile. Neovim falls back to the stale system parsers from Arch's `tree-sitter-*` packages under `/usr/lib/tree_sitter/`, which mismatch Neovim's bundled queries and throw errors like `Query error: Invalid field name "operator"` on every buffer. |
 
 ### Neovim
@@ -82,6 +83,7 @@ Packages that must be installed for a stowed config to work (all in the official
 - nvim-treesitter tracks the **`main`** branch. Upstream froze `master` for backward compatibility only (one commit in the last year, vs ~276 on `main`), and `main` is now the GitHub default. The two have incompatible APIs: `main` has no `ensure_installed` setup option, no `highlight`/`indent`/`incremental_selection` modules, and does not take textobject keymaps in `setup`.
 - Because `main` dropped `incremental_selection`, the `<c-space>` / `<c-s>` / `<M-space>` bindings are reimplemented directly on `vim.treesitter` in `lua/plugins/treesitter.lua`.
 - Parsers install to `~/.local/share/nvim/site/`. Passing `install_dir` to `require('nvim-treesitter').setup{}` is what prepends that directory to the runtimepath, which is how locally built parsers win over the system ones.
+- mason-lspconfig runs with `automatic_enable = false`: `lua/plugins/lspconfig.lua` enables exactly the servers in its `servers` table. Left on, it also starts any other server Mason has installed, so a replaced server (e.g. `cmake` after the switch to `neocmake`) keeps attaching.
 - `lazy-lock.json` is committed and pins exact plugin commits — that is the cross-machine reproducibility mechanism. nvim-treesitter publishes no release tags on `main`, so there is no version to pin instead.
 
 ## Key Conventions

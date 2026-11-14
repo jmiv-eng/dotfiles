@@ -88,7 +88,7 @@ set $gsr_record_dir ~/screenshots/gsr_recording
 set $gsr_replay gpu-screen-recorder -w $gsr_capture -f 60 -r 90 -c mkv \
     -a "default_output|default_input" -bm cbr -q 50000 \
     -sc ~/bin/gsr.sh -o $gsr_clip_dir -ro $gsr_record_dir
-exec command -v gpu-screen-recorder >/dev/null || notify-send -u critical "sway" "gpu-screen-recorder not installed — replay buffer disabled"
+exec '[ $gsr_autostart = no ] || command -v gpu-screen-recorder >/dev/null || notify-send -u critical "sway" "gpu-screen-recorder not installed — replay buffer disabled"'
 # Single-quoted so it runs as one shell command (at startup sway splits
 # unquoted ';' into separate sway commands)
 exec_always 'mkdir -p $gsr_clip_dir $gsr_record_dir; pkill -f ^gpu-screen-recorder; [ $gsr_autostart = no ] || exec $gsr_replay'

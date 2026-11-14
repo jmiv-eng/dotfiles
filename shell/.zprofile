@@ -1,6 +1,6 @@
 # Default programs
 export EDITOR="nvim"
-export TERMINAL="alacritty"
+export TERMINAL="${TERMINAL:-alacritty}"  # keep sway's $term when re-sourced
 export BROWSER="firefox"
 export READER="evince"
 export LANG=en_US.UTF-8
