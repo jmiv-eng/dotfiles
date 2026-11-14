@@ -15,6 +15,8 @@ done
 
 fallback=alacritty
 term=${TERMINAL:-$fallback}
+# TERMINAL=xdg-terminal-exec would make this script exec itself forever
+[ "${term##*/}" = xdg-terminal-exec ] && term=$fallback
 if ! command -v "$term" >/dev/null 2>&1; then
     notify-send -u critical -a terminal "Terminal \"$term\" isn't installed" \
         "Opening $fallback instead. Install it, or change \$term in ~/.config/sway/local.conf." \

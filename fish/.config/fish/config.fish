@@ -9,28 +9,36 @@
 # Settings use global scope (-g); universal variables would be per-machine state.
 
 ## Environment ---------------------------------------------------------------
-# Same defaults as ~/.zprofile, only set when missing
-for pair in EDITOR=nvim TERMINAL=alacritty BROWSER=firefox READER=evince \
-        LANG=en_US.UTF-8 QT_QPA_PLATFORMTHEME=qt5ct
-    set -l kv (string split -m1 = $pair)
-    set -q $kv[1]; or set -gx $kv[1] $kv[2]
-end
-
-# Work secrets (sh syntax): let sh evaluate them, import the new variables
-if test -f ~/.vutility_secure
-    sh -c '. ~/.vutility_secure >/dev/null 2>&1; env -0' | while read -lz entry
-        set -l kv (string split -m1 = -- $entry)
-        string match -qr '^[A-Za-z][A-Za-z0-9_]*$' -- $kv[1]; or continue
+# Interactive and login shells only. `fish -c` children (nvim's :!, ranger,
+# scripts) inherit all of this from their parent, so they skip the work.
+if status is-interactive; or status is-login
+    # Same defaults as ~/.zprofile, only set when missing
+    for pair in EDITOR=nvim TERMINAL=alacritty BROWSER=firefox READER=evince \
+            LANG=en_US.UTF-8 QT_QPA_PLATFORMTHEME=qt5ct
+        set -l kv (string split -m1 = $pair)
         set -q $kv[1]; or set -gx $kv[1] $kv[2]
     end
-end
 
-# PATH, ~/bin first (missing dirs are skipped)
-fish_add_path -g ~/bin ~/.local/bin ~/.cargo/bin
+    # Work secrets (sh syntax): let sh evaluate them, then import every
+    # variable the file adds or changes (inherited ones already match)
+    if test -f ~/.vutility_secure
+        sh -c '. ~/.vutility_secure >/dev/null 2>&1; env -0' | while read -lz entry
+            set -l kv (string split -m1 = -- $entry)
+            string match -qr '^[A-Za-z][A-Za-z0-9_]*$' -- $kv[1]; or continue
+            contains -- $kv[1] PWD OLDPWD SHLVL; and continue
+            test "$(string join : -- $$kv[1])" = "$kv[2]"; and continue
+            set -gx $kv[1] $kv[2]
+        end
+    end
 
-# SSH agent: gcr-ssh-agent (socket-activated by systemd)
-if test -S $XDG_RUNTIME_DIR/gcr/ssh
-    set -gx SSH_AUTH_SOCK $XDG_RUNTIME_DIR/gcr/ssh
+    # PATH, ~/bin first (missing dirs are skipped)
+    fish_add_path -g ~/bin ~/.local/bin ~/.cargo/bin
+
+    # SSH agent: gcr-ssh-agent (socket-activated by systemd). Not over SSH,
+    # where SSH_AUTH_SOCK may be a forwarded agent.
+    if not set -q SSH_CONNECTION; and test -S $XDG_RUNTIME_DIR/gcr/ssh
+        set -gx SSH_AUTH_SOCK $XDG_RUNTIME_DIR/gcr/ssh
+    end
 end
 
 ## Interactive ---------------------------------------------------------------
@@ -57,6 +65,10 @@ if status is-interactive
 
     # Finished prompts collapse to `❯`
     set -g fish_transient_prompt 1
+    # Ctrl+L: fish's own clear-screen, minus the prompt's leading blank line
+    bind ctrl-l 'set -g __jmiv_prompt_spaced 0' \
+        'status test-terminal-feature scroll-content-up && commandline -f scrollback-push' \
+        clear-screen
     set -gx VIRTUAL_ENV_DISABLE_PROMPT 1 # the prompt shows the venv itself
     # The pure prompt package, if installed, adds blank lines of its own
     functions -q _pure_prompt_new_line; and functions -e _pure_prompt_new_line

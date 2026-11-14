@@ -1,7 +1,8 @@
 // Optional: copy to ~/.config/waybar/machine.json for machine-specific additions.
 // The stowed config takes precedence, so this can only add keys it doesn't set
-// (e.g. a module it references but doesn't configure).
+// (e.g. which monitor the bar goes on, or its height).
 //
 // {
-//     "custom/gpu-temp": { "exec": "...", "interval": 5 }
+//     "output": "DP-1",
+//     "height": 30
 // }

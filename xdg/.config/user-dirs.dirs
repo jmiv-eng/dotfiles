@@ -1,7 +1,8 @@
 # XDG user directories (lowercase). user-dirs.conf keeps xdg-user-dirs-update
 # from rewriting this file.
-# No desktop on sway: anything that starts on "Desktop" (e.g. file pickers) opens ~
-XDG_DESKTOP_DIR="$HOME/"
+# Desktop is a plain folder: apps that drop files or shortcuts on the desktop
+# (Steam, Lutris, Wine, Firefox refresh) put them here instead of in ~
+XDG_DESKTOP_DIR="$HOME/desktop"
 XDG_DOWNLOAD_DIR="$HOME/downloads"
 XDG_TEMPLATES_DIR="$HOME/templates"
 XDG_PUBLICSHARE_DIR="$HOME/public"

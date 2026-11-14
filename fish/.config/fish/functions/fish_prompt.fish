@@ -7,7 +7,7 @@
 # venv, user@host (ssh/root only), clock. Colours come from the theme's
 # fish_color_* variables, each with a named-colour fallback.
 
-# fish_git_prompt: branch plus state markers (colours are set per render)
+# fish_git_prompt: branch plus state markers (colours are set below, once)
 set -g __fish_git_prompt_show_informative_status 1
 set -g __fish_git_prompt_showstashstate 1
 set -g __fish_git_prompt_showuntrackedfiles 1
@@ -30,6 +30,32 @@ function _jmiv_color --argument-names var fallback
     end
 end
 
+# Git colours, set once when this file loads (after config.fish chose the
+# theme). Setting them fires fish_git_prompt's handlers, which drop its cache.
+set -g __fish_git_prompt_color_branch (_jmiv_color fish_color_prompt_git_branch green)
+set -g __fish_git_prompt_color_upstream $__fish_git_prompt_color_branch
+set -g __fish_git_prompt_color_stashstate $__fish_git_prompt_color_branch
+set -g __fish_git_prompt_color_stagedstate (_jmiv_color fish_color_prompt_git_changes yellow)
+set -g __fish_git_prompt_color_dirtystate $__fish_git_prompt_color_stagedstate
+set -g __fish_git_prompt_color_untrackedfiles (_jmiv_color fish_color_prompt_git_untracked blue)
+set -g __fish_git_prompt_color_invalidstate (_jmiv_color fish_color_status red)
+
+# Blank line above each new prompt except the first. Decided on the fish_prompt
+# event, which fires once per new prompt; repaints (resize, Ctrl+L) only re-run
+# fish_prompt, so they redraw the same prompt instead of adding a line.
+function _jmiv_prompt_new --on-event fish_prompt
+    if set -q __jmiv_prompt_drawn
+        set -g __jmiv_prompt_spaced 1
+    else
+        set -g __jmiv_prompt_spaced 0
+    end
+end
+
+# After `clear`, the next prompt starts at the top with no blank line
+function _jmiv_prompt_cleared --on-event fish_postexec
+    string match -qr '^\s*(clear|cl)\s*$' -- $argv[1]; and set -e __jmiv_prompt_drawn
+end
+
 function fish_prompt --description 'Two-line segmented prompt'
     # Capture before any command overwrites them
     set -l last_status $status
@@ -42,14 +68,9 @@ function fish_prompt --description 'Two-line segmented prompt'
         return
     end
 
-    # Blank line between prompts, but not above the very first one
-    if set -q __jmiv_prompt_drawn
-        set -g __jmiv_prompt_spaced 1
-        echo
-    else
-        set -g __jmiv_prompt_spaced 0
-        set -g __jmiv_prompt_drawn
-    end
+    # Spacing is decided by _jmiv_prompt_new (unset before its first event)
+    test "$__jmiv_prompt_spaced" = 1; and echo
+    set -g __jmiv_prompt_drawn
 
     set -l c_bar (_jmiv_color fish_color_prompt_bar 242424)
     set -l c_icon (_jmiv_color fish_color_prompt_icon cyan)
@@ -57,17 +78,7 @@ function fish_prompt --description 'Two-line segmented prompt'
     set -l c_info (_jmiv_color fish_color_prompt_info cyan)
     set -l c_dur (_jmiv_color fish_color_prompt_duration yellow)
     set -l c_err (_jmiv_color fish_color_status red)
-
-    set -l c_branch (_jmiv_color fish_color_prompt_git_branch green)
-    set -l c_changes (_jmiv_color fish_color_prompt_git_changes yellow)
-    set -l c_untracked (_jmiv_color fish_color_prompt_git_untracked blue)
-    set -g __fish_git_prompt_color_branch $c_branch
-    set -g __fish_git_prompt_color_upstream $c_branch
-    set -g __fish_git_prompt_color_stashstate $c_branch
-    set -g __fish_git_prompt_color_stagedstate $c_changes
-    set -g __fish_git_prompt_color_dirtystate $c_changes
-    set -g __fish_git_prompt_color_untrackedfiles $c_untracked
-    set -g __fish_git_prompt_color_invalidstate $c_err
+    set -l c_branch $__fish_git_prompt_color_branch
 
     set -l normal (set_color normal)
     set -l sep (set_color $c_mute)' │ '
