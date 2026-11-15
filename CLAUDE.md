@@ -32,7 +32,7 @@ All machines run Arch Linux + Sway (Wayland).
 
 All packages are shared — stow everything on every machine. Machine-specific values are handled by:
 
-1. **`~/.config/sway/local.conf`** — gitignored. Contains monitor names, wallpapers, workspace mapping, lock screen config, and switches with shared defaults: `$term` (terminal, default alacritty), `$shell` (interactive shell, default zsh), `$gsr_autostart`. Template at `sway/.config/sway/local.conf.example`.
+1. **`~/.config/sway/local.conf`** — gitignored. Contains monitor names, wallpapers, workspace mapping, lock screen config, and switches with shared defaults: `$term` (terminal, default alacritty), `$shell` (interactive shell, default zsh), `$sleep` (default `systemctl suspend`; ace uses `suspend-then-hibernate`), `$gsr_autostart`. Template at `sway/.config/sway/local.conf.example`.
 2. **Hostname case in `.zprofile`/`.bash_profile`** — Nvidia machines get GPU env vars and `--unsupported-gpu`.
 3. **Waybar hardware-conditional modules** — `temperature#cpu` lists fallback sensor paths; `temperature#gpu` disables itself without the AMD GPU hwmon path (its `thermal-zone` points at a nonexistent zone); `custom/*` modules use `exec-if`.
 4. **Shikane profiles** — all machines' display profiles in one file; they self-select based on connected hardware.

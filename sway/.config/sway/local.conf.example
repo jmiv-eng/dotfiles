@@ -21,6 +21,10 @@ set $startup_workspace 1
 # set $term alacritty
 # set $shell fish
 
+# Sleep command (default: systemctl suspend). suspend-then-hibernate needs a
+# disk swapfile and resume= on the kernel command line
+# set $sleep systemctl suspend-then-hibernate
+
 # gpu-screen-recorder capture target (monitor name, or "portal")
 set $gsr_capture eDP-1
 # Turn off the always-on replay buffer

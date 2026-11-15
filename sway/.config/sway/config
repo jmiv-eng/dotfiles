@@ -7,6 +7,8 @@ set $gsr_autostart yes
 # Terminal (must accept `-e CMD`) and the interactive shell it runs
 set $term alacritty
 set $shell zsh
+# Sleep command for the idle timeout and $mod+p+s
+set $sleep systemctl suspend
 
 # Machine-specific values: monitors, wallpapers, lock screen, workspaces
 include ~/.config/sway/local.conf
@@ -139,7 +141,7 @@ bindsym $mod+d exec $menu
 floating_modifier $mod normal
 bindsym $mod+Shift+c reload
 bindsym $mod+Escape exec $lock
-bindsym $mod+p+s exec '$lock && systemctl suspend'
+bindsym $mod+p+s exec '$lock && $sleep'
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 
 ### Appearance
@@ -153,7 +155,7 @@ gaps outer 2
 exec swayidle -w \
     timeout 800 '$lock' \
     timeout 1000 'swaymsg "output * dpms off"' \
-    timeout 1800 '$lock && systemctl suspend' \
+    timeout 1800 '$lock && $sleep' \
     resume 'swaymsg "output * dpms on"' \
     before-sleep 'pgrep -x swaylock >/dev/null || $lock'
 
